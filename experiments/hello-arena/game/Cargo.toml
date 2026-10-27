@@ -1,0 +1,13 @@
+[package]
+name = "hello-arena-game"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish = false
+description = "hello-arena's rules: pure, serde only, stepped at 60 Hz. Shared by the worker (typed API) and the macroquad client."
+
+[dependencies]
+serde = { workspace = true }
+
+[dev-dependencies]
+serde_json = { workspace = true }

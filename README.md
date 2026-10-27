@@ -54,8 +54,8 @@ GitHub Actions (`.github/workflows/deploy.yml`) deploys on every push to
 
 | Kind | Name | Notes |
 | --- | --- | --- |
-| Secret | `CLOUDFLARE_API_TOKEN` | Workers Scripts edit on the account |
-| Variable | `CLOUDFLARE_ACCOUNT_ID` | the account the workers live in |
+| Org secret | `CLOUDFLARE_API_TOKEN` | Workers Scripts edit on the account |
+| Org secret | `CLOUDFLARE_ACCOUNT_ID` | the account the workers live in |
 | Variable (optional) | `DISPATCH_NAMESPACE` | when set, workers deploy into this Workers for Platforms namespace instead of workers.dev |
 
 Nothing account-specific is committed: no account id, routes, custom domains

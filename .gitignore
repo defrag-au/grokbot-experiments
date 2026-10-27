@@ -1,0 +1,10 @@
+/target
+**/build/
+**/dist/
+**/node_modules/
+**/.wrangler/
+.dev.vars*
+!.dev.vars.example
+# stamped by build.rs from the plugin crates' PLUGIN_JS
+experiments/*/client/web/*.js
+.tmp/

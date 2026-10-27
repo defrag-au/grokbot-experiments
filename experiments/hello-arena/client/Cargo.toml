@@ -1,0 +1,30 @@
+[package]
+name = "hello-arena-client"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish = false
+description = "hello-arena's screen: a macroquad-gamekit client. No wasm-bindgen anywhere in its wasm32 tree."
+build = "build.rs"
+
+[[bin]]
+name = "hello-arena-client"
+path = "src/main.rs"
+
+[dependencies]
+# Pinned directly, no workspace line: the root [patch.crates-io] swaps in the
+# glyph-atlas fix.
+macroquad = "0.4"
+macroquad-gamekit = { workspace = true }
+# getrandom backend + `launch_query` (`?seed=`). Must be referenced from a
+# reachable path or its registration is dropped as dead code.
+miniquad-platform = { workspace = true }
+# /api/hello in the browser. The rev the other macroquad apps use, so the
+# quad-net.js mq-bundle stages matches the Rust that imports it.
+quad-net = { git = "https://github.com/not-fl3/quad-net", rev = "31796d4e" }
+serde_json = { workspace = true }
+hello-arena-game = { path = "../game" }
+
+[build-dependencies]
+# Stamps platform.js into web/ so the page's bridge matches the crate.
+miniquad-platform = { workspace = true }

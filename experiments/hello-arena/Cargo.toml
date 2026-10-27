@@ -1,0 +1,20 @@
+[package]
+name = "hello-arena"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish = false
+description = "hello-arena worker: a typed /api/hello and the macroquad client served as static assets"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+# The Workers stack at the workspace's shared-crates rev. `worker` is also a
+# direct dependency, pinned to the version worker_stack pins, because the
+# `#[event]` macro expands to `::worker::…` paths (same as shared-crates'
+# flow-demo) and build-worker.sh reads its version to pick worker-build.
+worker_stack = { workspace = true }
+worker = "=0.7.4"
+serde_json = { workspace = true }
+hello-arena-game = { path = "game" }

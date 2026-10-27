@@ -1,0 +1,5 @@
+# getrandom 0.3 on wasm32 needs a backend chosen at build time. The macroquad
+# clients route randomness through miniquad-platform's plugin; workers get it
+# from wasm_js. Same flag as cnft.dev-workers.
+[target.wasm32-unknown-unknown]
+rustflags = ['--cfg=getrandom_backend="wasm_js"']

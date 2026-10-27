@@ -1,0 +1,3 @@
+# <package> <crate dir> <served at> <title…>
+# Each line is built by mq-bundle into dist/<served at>/ before worker-build.
+hello-arena-client client app Hello Arena
