@@ -1,6 +1,6 @@
 # hello-arena. No account_id, routes or custom domains in this file: the
-# account comes from CLOUDFLARE_ACCOUNT_ID in the environment (a repo
-# variable in CI), and the worker lives on workers.dev or, when the repo
+# account comes from CLOUDFLARE_ACCOUNT_ID in the environment (the defrag-au
+# org secret in CI), and the worker lives on workers.dev or, when the repo
 # variable DISPATCH_NAMESPACE is set, in that Workers for Platforms namespace.
 #
 # Every worker name MUST start with `grokbot-experiments-`: this repo deploys
