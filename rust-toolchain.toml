@@ -1,0 +1,7 @@
+# Stable, with the wasm target and the lint tools CI uses. macroquad-gamekit
+# needs rustc >= 1.88 (see workspace rust-version). On a Nix machine the
+# defrag-nix dev shell provides the same; this file is for everyone else.
+[toolchain]
+channel = "stable"
+components = ["rustfmt", "clippy"]
+targets = ["wasm32-unknown-unknown"]

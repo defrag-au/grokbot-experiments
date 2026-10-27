@@ -1,0 +1,31 @@
+# hello-arena. No account_id, routes or custom domains in this file: the
+# account comes from CLOUDFLARE_ACCOUNT_ID in the environment (a repo
+# variable in CI), and the worker lives on workers.dev or, when the repo
+# variable DISPATCH_NAMESPACE is set, in that Workers for Platforms namespace.
+#
+# Every worker name MUST start with `grokbot-experiments-`: this repo deploys
+# into an account shared with other services, and the deploy workflow refuses
+# any other name.
+name = "grokbot-experiments-hello-arena"
+main = "build/worker/shim.mjs"
+compatibility_date = "2026-05-01"
+
+[build]
+command = "../../scripts/build-worker.sh"
+
+# The client is staged at dist/app/ (macroquad-clients.txt). `/` is the
+# worker's redirect there. No single-page-application fallback: there is no
+# root index.html for it to fall back to; add it back with a root frontend.
+[assets]
+directory = "./dist/"
+binding = "ASSETS"
+run_worker_first = ["/", "/api/*"]
+
+[observability]
+enabled = true
+
+[env.dev]
+name = "grokbot-experiments-hello-arena-dev"
+
+[env.production]
+name = "grokbot-experiments-hello-arena"

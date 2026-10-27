@@ -1,0 +1,48 @@
+# One workspace for every experiment. Nested crates are listed explicitly:
+# a macroquad client never gets a [workspace] of its own, or the
+# [patch.crates-io] below stops applying to it.
+[workspace]
+resolver = "2"
+members = [
+    "tools/mq-bundle",
+    # hello-arena: the template experiment (copy it to start a new one).
+    "experiments/hello-arena",
+    "experiments/hello-arena/game",
+    "experiments/hello-arena/client",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.88"
+authors = ["Damon Oehlman <damon.oehlman@gmail.com>"]
+publish = false
+
+[workspace.dependencies]
+# shared-crates: every crate on ONE rev, and the worker and its macroquad
+# client move together. Bump all of these in one commit.
+worker_stack = { git = "https://github.com/defrag-au/shared-crates", package = "worker_stack", rev = "be4544a" }
+macroquad-gamekit = { git = "https://github.com/defrag-au/shared-crates", package = "macroquad-gamekit", rev = "be4544a" }
+macroquad-widgets = { git = "https://github.com/defrag-au/shared-crates", package = "macroquad-widgets", rev = "be4544a" }
+miniquad-platform = { git = "https://github.com/defrag-au/shared-crates", package = "miniquad-platform", rev = "be4544a" }
+macroquad-bundle = { git = "https://github.com/defrag-au/shared-crates", package = "macroquad-bundle", rev = "be4544a" }
+ui-theme = { git = "https://github.com/defrag-au/shared-crates", package = "ui-theme", rev = "be4544a" }
+
+serde = { version = "1.0.217", features = ["derive"] }
+serde_json = "1.0.134"
+
+# Copied verbatim from the shared-crates root Cargo.toml at be4544a:
+#
+# macroquad's glyph-atlas packing fix (upstream 8d602d3, "text: avoid spurious
+# font atlas growth"), which landed after 0.4.16. A glyph landing within 2 px of
+# a row's end doubled the whole atlas, at random: one solada board run in twelve
+# reached an 8192² atlas (256 MB). The rev is 0.4.16 plus a docs change plus the
+# fix, nothing else. A [patch] only applies in the workspace that builds, so
+# every consumer of macroquad-gamekit carries this line too.
+# Drop it, here and in each consumer, once a release after 0.4.16 is out.
+[patch.crates-io]
+macroquad = { git = "https://github.com/not-fl3/macroquad", rev = "8d602d3f8ebb8a3a582ee15d92983bbb81ee3ef6" }
+
+[profile.release]
+opt-level = "s"
+lto = true

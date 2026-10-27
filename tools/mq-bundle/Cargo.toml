@@ -1,0 +1,9 @@
+[package]
+name = "mq-bundle"
+version.workspace = true
+edition.workspace = true
+publish = false
+description = "Stage a macroquad client as a static web bundle (shared-crates macroquad-bundle, pinned by this workspace's rev)"
+
+[dependencies]
+macroquad-bundle = { workspace = true }

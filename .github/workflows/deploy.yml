@@ -1,0 +1,72 @@
+name: Deploy
+
+# Deploys experiments with wrangler. Credentials are referenced by name only:
+#   secrets.CLOUDFLARE_API_TOKEN   (repo secret)
+#   vars.CLOUDFLARE_ACCOUNT_ID     (repo variable)
+#   vars.DISPATCH_NAMESPACE        (optional repo variable; when set, user
+#                                   workers go into that Workers for Platforms
+#                                   namespace instead of workers.dev)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      experiment:
+        description: "Experiment directory under experiments/ (blank: all)"
+        required: false
+        default: ""
+      environment:
+        description: "wrangler --env"
+        type: choice
+        options: [production, dev]
+        default: production
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+      DISPATCH_NAMESPACE: ${{ vars.DISPATCH_NAMESPACE }}
+      WRANGLER_SEND_METRICS: "false"
+      DEPLOY_ENV: ${{ inputs.environment || 'production' }}
+      ONLY: ${{ inputs.experiment }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: rustup show active-toolchain || rustup toolchain install
+      - uses: Swatinem/rust-cache@v2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install -g wrangler@4
+      - name: Deploy
+        run: |
+          set -euo pipefail
+          if [ -z "${CLOUDFLARE_API_TOKEN}" ] || [ -z "${CLOUDFLARE_ACCOUNT_ID}" ]; then
+            echo "::error::Set the CLOUDFLARE_API_TOKEN secret and CLOUDFLARE_ACCOUNT_ID variable"
+            exit 1
+          fi
+          for dir in experiments/*/; do
+            exp=$(basename "$dir")
+            [ -f "$dir/wrangler.toml" ] || continue
+            if [ -n "$ONLY" ] && [ "$ONLY" != "$exp" ]; then continue; fi
+            # Guard: only ever deploy workers named grokbot-experiments-*.
+            names=$(grep -E '^\s*name\s*=' "$dir/wrangler.toml" | sed -E 's/.*=\s*"([^"]*)".*/\1/')
+            for n in $names; do
+              case "$n" in
+                grokbot-experiments-*) ;;
+                *) echo "::error::$exp/wrangler.toml names worker '$n'; names must start with grokbot-experiments-"; exit 1 ;;
+              esac
+            done
+            args=(deploy --env "$DEPLOY_ENV")
+            if [ -n "${DISPATCH_NAMESPACE}" ]; then
+              args+=(--dispatch-namespace "$DISPATCH_NAMESPACE")
+            fi
+            echo "🚀 $exp → wrangler ${args[*]}"
+            (cd "$dir" && wrangler "${args[@]}")
+          done
