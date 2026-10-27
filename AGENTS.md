@@ -8,7 +8,7 @@
    `--target wasm32-unknown-unknown` on the experiment crates.
 3. **Nothing secret or account-specific is committed**: no tokens, no
    account ids, zone ids, binding ids, hostnames, routes or custom domains.
-   CI reads `secrets.CLOUDFLARE_API_TOKEN`, `vars.CLOUDFLARE_ACCOUNT_ID` and
+   CI reads `secrets.CLOUDFLARE_API_TOKEN`, `secrets.CLOUDFLARE_ACCOUNT_ID` and
    `vars.DISPATCH_NAMESPACE` by name only.
 4. **Worker names start with `grokbot-experiments-`.** The Cloudflare
    account is shared with production services; never create, change or
